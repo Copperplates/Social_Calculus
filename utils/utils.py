@@ -102,7 +102,7 @@ def sample_mask(idx: np.array, n_class: int) -> np.array:
     """
     mask = np.zeros(n_class)
     mask[idx] = 1
-    return np.array(mask, dtype=np.bool)
+    return np.array(mask, dtype=bool)
 
 
 def pad_adjlist(x_data):

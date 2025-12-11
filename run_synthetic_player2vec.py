@@ -13,15 +13,15 @@ import tensorflow as tf
 from tensorflow.keras import optimizers
 
 from algorithms.Player2Vec.Player2Vec import Player2Vec
-from utils.data_loader import load_data_dblp
+from utils.data_loader import load_data_synthetic
 from utils.utils import preprocess_adj, preprocess_feature, sample_mask
 
 
 # init the common args, expect the model specific args
 parser = argparse.ArgumentParser()
 parser.add_argument('--seed', type=int, default=123, help='Random seed.')
-parser.add_argument('--dataset_str', type=str, default='dblp',
-                    help="['dblp','example']")
+parser.add_argument('--dataset_str', type=str, default='synthetic',
+                    help="['dblp','example', 'synthetic']")
 parser.add_argument('--train_size', type=float, default=0.2,
                     help='training set percentage')
 parser.add_argument('--epochs', type=int, default=30,
@@ -83,8 +83,9 @@ def Player2Vec_main(support: list,
 
 if __name__ == "__main__":
     # load the data
+    # Use synthetic data loader
     adj_list, features, [idx_train, _, idx_val, _, idx_test, _], y = \
-        load_data_dblp(meta=True, train_size=args.train_size)
+        load_data_synthetic(train_size=args.train_size)
     args.nodes = features.shape[0]
 
     # convert to dense tensors
@@ -99,6 +100,7 @@ if __name__ == "__main__":
 
     # initialize the model parameters
     args.num_meta = len(supports)
+    # features is (coords, values, shape) tuple
     args.input_dim = features[2][1]
     args.output_dim = y.shape[1]
     args.train_size = len(idx_train)

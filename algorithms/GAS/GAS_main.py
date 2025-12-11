@@ -64,7 +64,7 @@ def GAS_main(adj_list: list,
     :param args: additional parameters
     """
     model = GAS(args)
-    optimizer = optimizers.Adam(lr=args.lr)
+    optimizer = optimizers.Adam(learning_rate=args.lr)
 
     # train
     for _ in tqdm(range(args.epochs)):

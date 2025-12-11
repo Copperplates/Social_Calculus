@@ -23,7 +23,7 @@ def sparse_dropout(x: tf.SparseTensor, rate: float,
     :param noise_shape: the feature dimension
     """
     random_tensor = 1 - rate
-    random_tensor += tf.random.uniform(noise_shape)
+    random_tensor += tf.random.uniform([noise_shape])
     dropout_mask = tf.cast(tf.floor(random_tensor), dtype=tf.bool)
     pre_out = tf.sparse.retain(x, dropout_mask)
     return pre_out * (1. / (1 - rate))
@@ -80,11 +80,11 @@ class GraphConvolution(layers.Layer):
 
         self.weights_ = []
         for i in range(1):
-            w = self.add_weight('weight' + str(i), [input_dim, output_dim],
-                                dtype=tf.float32)
+            w = self.add_weight(name='weight' + str(i), shape=[input_dim, output_dim],
+                                dtype=tf.float32, initializer='glorot_uniform')
             self.weights_.append(w)
         if self.bias:
-            self.bias = self.add_weight('bias', [output_dim], dtype=tf.float32)
+            self.bias = self.add_weight(name='bias', shape=[output_dim], dtype=tf.float32, initializer='zeros')
 
     def call(self, inputs: Tuple[tf.Tensor, tf.Tensor],
              training: bool = True) -> tf.Tensor:
@@ -340,9 +340,10 @@ class ConcatenationAggregator(layers.Layer):
         self.dropout = dropout
         self.act = act
         self.concat = concat
-        self.con_agg_weights = self.add_weight('con_agg_weights',
-                                               [input_dim, output_dim],
-                                               dtype=tf.float32)
+        self.con_agg_weights = self.add_weight(name='con_agg_weights',
+                                               shape=[input_dim, output_dim],
+                                               dtype=tf.float32,
+                                               initializer='glorot_uniform')
 
     def call(self, inputs):
         """
@@ -387,7 +388,7 @@ class SageMeanAggregator(layers.Layer):
         self.w = self.add_weight(name=kwargs["name"] + "_weight",
                                  shape=(src_dim * 2, dst_dim),
                                  dtype=tf.float32,
-                                 initializer=GlorotUniform,
+                                 initializer=GlorotUniform(),
                                  trainable=True
                                  )
 
@@ -467,24 +468,28 @@ class AttentionAggregator(layers.Layer):
         self.act = act
         self.concat = concat
 
-        self.user_neigh_weights = self.add_weight('user_neigh_weights',
-                                                  [input_dim1, output_dim],
-                                                  dtype=tf.float32)
-        self.item_neigh_weights = self.add_weight('item_neigh_weights',
-                                                  [input_dim2, output_dim],
-                                                  dtype=tf.float32)
-        self.center_user_weights = self.add_weight('center_user_weights',
-                                                   [input_dim3, output_dim],
-                                                   dtype=tf.float32)
-        self.center_item_weights = self.add_weight('center_item_weights',
-                                                   [input_dim4, output_dim],
-                                                   dtype=tf.float32)
+        self.user_neigh_weights = self.add_weight(name='user_neigh_weights',
+                                                  shape=[input_dim1, output_dim],
+                                                  dtype=tf.float32,
+                                                  initializer='glorot_uniform')
+        self.item_neigh_weights = self.add_weight(name='item_neigh_weights',
+                                                  shape=[input_dim2, output_dim],
+                                                  dtype=tf.float32,
+                                                  initializer='glorot_uniform')
+        self.center_user_weights = self.add_weight(name='center_user_weights',
+                                                   shape=[input_dim3, output_dim],
+                                                   dtype=tf.float32,
+                                                   initializer='glorot_uniform')
+        self.center_item_weights = self.add_weight(name='center_item_weights',
+                                                   shape=[input_dim4, output_dim],
+                                                   dtype=tf.float32,
+                                                   initializer='glorot_uniform')
 
         if self.bias:
-            self.user_bias = self.add_weight('user_bias', [self.output_dim],
-                                             dtype=tf.float32)
-            self.item_bias = self.add_weight('item_bias', [self.output_dim],
-                                             dtype=tf.float32)
+            self.user_bias = self.add_weight(name='user_bias', shape=[self.output_dim],
+                                             dtype=tf.float32, initializer='zeros')
+            self.item_bias = self.add_weight(name='item_bias', shape=[self.output_dim],
+                                             dtype=tf.float32, initializer='zeros')
 
         self.input_dim1 = input_dim1
         self.input_dim2 = input_dim2
@@ -603,12 +608,12 @@ class GEMLayer(layers.Layer):
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.device_num = device_num
-        self.W = self.add_weight('weight', [input_dim, output_dim],
-                                 dtype=tf.float32)
-        self.V = self.add_weight('V', [output_dim, output_dim],
-                                 dtype=tf.float32)
-        self.alpha = self.add_weight('alpha', [self.device_num, 1],
-                                     dtype=tf.float32)
+        self.W = self.add_weight(name='weight', shape=[input_dim, output_dim],
+                                 dtype=tf.float32, initializer='glorot_uniform')
+        self.V = self.add_weight(name='V', shape=[output_dim, output_dim],
+                                 dtype=tf.float32, initializer='glorot_uniform')
+        self.alpha = self.add_weight(name='alpha', shape=[self.device_num, 1],
+                                     dtype=tf.float32, initializer='glorot_uniform')
 
     def call(self, inputs):
         """

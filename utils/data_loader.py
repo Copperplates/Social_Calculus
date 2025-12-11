@@ -202,3 +202,30 @@ def load_data_gas():
                                                         shuffle=True)
     split_ids = [X_train, X_test]
     return adjs, features, split_ids, y
+
+def load_data_synthetic(path: str = 'dataset/Synthetic_Financial_Fraud.mat',
+                        train_size: int = 0.8) -> \
+        Tuple[list, np.array, list, np.array]:
+    """
+    The data loader to load the synthetic financial fraud data
+    """
+    data = sio.loadmat(path)
+    features = data['features'].astype(float)
+    y = data['label']
+    
+    # Adjacency matrices
+    rownetworks = [data['net_Social'], data['net_Transaction'], data['net_Device']]
+    
+    index = np.arange(len(y))
+    X_train, X_test, y_train, y_test = train_test_split(index, y, stratify=y, 
+                                                        test_size=1 - train_size,
+                                                        random_state=48, shuffle=True)
+    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train,
+                                                      stratify=y_train,
+                                                      test_size=0.2,
+                                                      random_state=48,
+                                                      shuffle=True)
+    
+    split_ids = [X_train, y_train, X_val, y_val, X_test, y_test]
+    
+    return rownetworks, features, split_ids, np.array(y)

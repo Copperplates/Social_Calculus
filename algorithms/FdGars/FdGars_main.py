@@ -53,7 +53,7 @@ def FdGars_main(support: list,
     :param args: additional parameters
     """
     model = FdGars(args.input_dim, args.nhid, args.output_dim, args)
-    optimizer = optimizers.Adam(lr=args.lr)
+    optimizer = optimizers.Adam(learning_rate=args.lr)
 
     # train
     for epoch in tqdm(range(args.epochs)):

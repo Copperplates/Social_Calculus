@@ -53,7 +53,7 @@ def GEM_main(supports: list, features: tf.SparseTensor,
     :param args: additional parameters
     """
     model = GEM(args.input_dim, args.output_dim, args)
-    optimizer = optimizers.Adam(lr=args.lr)
+    optimizer = optimizers.Adam(learning_rate=args.lr)
 
     # train
     for _ in tqdm(range(args.epochs)):

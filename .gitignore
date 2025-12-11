@@ -1,3 +1,6 @@
-
 *.mat
 /.idea
+__pycache__/
+*.pyc
+.vscode/
+.DS_Store

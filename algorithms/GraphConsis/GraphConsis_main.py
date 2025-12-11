@@ -182,7 +182,7 @@ def compute_diffusion_matrix(dst_nodes, neigh_dict, sample_size,
     # sample neighbors
     adj_mat_full = np.stack([vectorize(sample(n, neigh_dict[n]))
                              for n in dst_nodes])
-    nonzero_cols_mask = np.any(adj_mat_full.astype(np.bool), axis=0)
+    nonzero_cols_mask = np.any(adj_mat_full.astype(bool), axis=0)
 
     # compute diffusion matrix
     adj_mat = adj_mat_full[:, nonzero_cols_mask]

@@ -61,7 +61,7 @@ def SemiGNN_main(adj_list: list,
                     args.semi_encoding2, args.semi_encoding3,
                     args.init_emb_size, args.view_num, args.alpha)
 
-    optimizer = optimizers.Adam(lr=args.lr)
+    optimizer = optimizers.Adam(learning_rate=args.lr)
     adj_nodelists = [matrix_to_adjlist(adj, pad=False) for adj in
                      adj_list]
     pairs = [random_walks(adj_nodelists[i], 2, 3)
